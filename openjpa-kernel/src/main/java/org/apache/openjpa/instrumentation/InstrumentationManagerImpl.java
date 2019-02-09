@@ -102,8 +102,10 @@ public class InstrumentationManagerImpl implements InstrumentationManager {
         if (_closed) {
             return;
         }
-        for (InstrumentationProvider provider : _providers) {
-            provider.stop();
+        synchronized (_providers) {
+            for (InstrumentationProvider provider : _providers) {
+                provider.stop();
+            }
         }
         _closed = true;
     }
