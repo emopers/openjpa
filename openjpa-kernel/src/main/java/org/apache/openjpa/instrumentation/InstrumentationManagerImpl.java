@@ -73,11 +73,13 @@ public class InstrumentationManagerImpl implements InstrumentationManager {
         if (_providers == null || _providers.size() == 0) {
             return;
         }
-        for (InstrumentationProvider provider : _providers) {
-            if (!provider.isStarted()) {
-                provider.start();
+        synchronized (_providers) {
+            for (InstrumentationProvider provider : _providers) {
+                if (!provider.isStarted()) {
+                    provider.start();
+                }
+                provider.startInstruments(level, context);
             }
-            provider.startInstruments(level, context);
         }
     }
 
@@ -89,8 +91,10 @@ public class InstrumentationManagerImpl implements InstrumentationManager {
         if (_providers == null || _providers.size() == 0) {
             return;
         }
-        for (InstrumentationProvider provider : _providers) {
-            provider.stopInstruments(level, context);
+        synchronized (_providers) {
+            for (InstrumentationProvider provider : _providers) {
+                provider.stopInstruments(level, context);
+            }
         }
     }
 
@@ -102,8 +106,10 @@ public class InstrumentationManagerImpl implements InstrumentationManager {
         if (_closed) {
             return;
         }
-        for (InstrumentationProvider provider : _providers) {
-            provider.stop();
+        synchronized (_providers) {
+            for (InstrumentationProvider provider : _providers) {
+                provider.stop();
+            }
         }
         _closed = true;
     }
